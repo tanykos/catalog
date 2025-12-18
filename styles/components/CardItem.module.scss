@@ -1,0 +1,199 @@
+@import "../mixins";
+
+// =====================================================
+// PRODUCT CARD
+// =====================================================
+.card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto;
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition-normal;
+  animation: lazyRender 0.6s ease-out forwards;
+
+  // Gradient border effect on hover
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: $radius-lg;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 0%, transparent 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity $transition-normal;
+  }
+
+  // Shimmer wave overlay on hover
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: $radius-lg;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 20%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity $transition-normal;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-card-hover;
+    border-color: transparent;
+
+    &::before {
+      opacity: 1;
+      background: linear-gradient(135deg, $cyan 0%, $teal 50%, $cyan 100%);
+      background-size: 200% 200%;
+      animation: gradientRotate 3s ease infinite;
+    }
+
+    &::after {
+      opacity: 1;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+
+    .card__img {
+      transform: scale(1.05);
+    }
+  }
+
+  &__img-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: $bg-dark;
+  }
+
+  &__img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform $transition-slow;
+  }
+
+  &__description-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 16px;
+    padding-right: 56px;
+    background: $bg-card;
+    min-height: 72px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: $text-primary;
+    text-align: left;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    transition: color $transition-normal, background $transition-normal, -webkit-text-fill-color $transition-normal;
+    background: linear-gradient(90deg, $text-primary, $text-primary);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  // =====================================================
+  // FAVORITE BUTTON (Heart)
+  // =====================================================
+  &__add-to-favorite-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba($cyan, 0.1);
+    color: $text-muted;
+    cursor: pointer;
+    transition: all $transition-normal;
+    z-index: 10;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      transition: transform $transition-fast;
+    }
+
+    &:hover:not(&_active):not(&_loading) {
+      background: rgba($cyan, 0.2);
+      color: $cyan;
+      transform: scale(1.1);
+
+      svg {
+        transform: scale(1.1);
+      }
+    }
+
+    // Active state (favorite)
+    &_active {
+      color: $red;
+      background: rgba(255, 71, 87, 0.1);
+      animation: heartBeat 0.8s ease-in-out;
+
+      &:hover {
+        background: rgba(255, 71, 87, 0.2);
+        transform: scale(1.1);
+      }
+    }
+
+    // Loading state
+    &_loading {
+      animation: pulse 1s ease-in-out infinite;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  // Hover state for title gradient
+  &:hover &__title {
+    background: linear-gradient(90deg, $cyan 0%, $teal 50%, $cyan 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientRotate 2s ease infinite;
+  }
+}

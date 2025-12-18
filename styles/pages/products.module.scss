@@ -1,0 +1,20 @@
+@import "../mixins";
+
+// =====================================================
+// PRODUCTS PAGE
+// =====================================================
+.content-container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 24px;
+  // min-height ensures sticky sidebar works until footer
+  min-height: calc(100vh - 118px); // viewport - header(57px) - footer(61px)
+  animation: lazyRender 0.6s ease-out;
+
+  @media (max-width: 950px) {
+    flex-direction: column;
+    gap: 20px;
+    min-height: auto;
+  }
+}

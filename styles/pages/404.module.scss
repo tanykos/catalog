@@ -1,0 +1,67 @@
+@import "../mixins";
+
+// =====================================================
+// 404 PAGE
+// =====================================================
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  text-align: center;
+  animation: lazyRender 0.5s ease-out;
+
+  &__code {
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 16px;
+    @include gradient-text;
+    animation: glowPulse 2s ease-in-out infinite;
+
+    @media (max-width: 600px) {
+      font-size: 80px;
+    }
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 12px;
+  }
+
+  &__description {
+    font-size: 16px;
+    color: $text-muted;
+    margin-bottom: 32px;
+    max-width: 400px;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(90deg, $primary-blue, $cyan);
+    color: $text-primary;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: $radius-sm;
+    transition: all $transition-normal;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 139, 255, 0.3);
+    }
+
+    svg {
+      transition: transform $transition-normal;
+    }
+
+    &:hover svg {
+      transform: translateX(-4px);
+    }
+  }
+}

@@ -1,0 +1,314 @@
+@import "../mixins";
+
+// =====================================================
+// CATALOG FILTERS SIDEBAR
+// =====================================================
+// Layout measurements
+$header-height: 80px;
+$footer-height: 80px;
+$main-padding: 24px;
+
+.catalog-page__filters {
+  flex: 0 0 260px;
+  max-width: 260px;
+  min-width: 220px;
+
+  align-self: flex-start;
+  position: sticky;
+  top: $main-padding;
+
+  height: auto;
+  max-height: calc(100vh - $header-height - $main-padding*2);
+  min-height: 0;
+
+  @media (max-width: 950px) {
+    flex: 0 0 auto;
+    max-width: 100%;
+    min-width: auto;
+    align-self: stretch;
+    position: static;
+    height: auto;
+    max-height: none;
+    min-height: auto;
+  }
+}
+
+.filters {
+  // Flex container to pass height down
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0; // Critical: allows flex child to shrink
+  border-radius: $radius-lg;
+  animation: lazyRender 0.5s ease-out;
+  background: $bg-card;
+  border: 1px solid $border-color;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 20px;
+    flex: 1 1 0;
+    min-height: 0; // Critical: allows content to shrink and enable scroll
+    overflow: hidden;
+  }
+
+  @media (max-width: 950px) {
+    height: auto;
+    min-height: auto;
+
+    &__inner {
+      flex: 0 0 auto;
+      min-height: auto;
+      overflow: visible;
+    }
+  }
+
+}
+
+// =====================================================
+// TOTAL COUNT
+// =====================================================
+.total-count {
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+  padding: 12px 16px;
+  background: rgba($cyan, 0.05);
+  border-radius: $radius-sm;
+  flex-shrink: 0; // Don't shrink
+  @include fontz(14px, 20px, 500);
+
+  &__label {
+    color: $text-muted;
+  }
+
+  &__output {
+    color: $cyan;
+    font-weight: 600;
+  }
+}
+
+// =====================================================
+// SORT FILTER
+// =====================================================
+.sort-filter {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  flex-shrink: 0; // Don't shrink
+
+  &__label {
+    @include fontz(14px, 20px, 600);
+    color: $text-primary;
+  }
+
+  &__select {
+    padding: 10px 36px 10px 14px;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    @include fontz(14px, 20px, 400);
+    color: $text-primary;
+    background-color: $bg-dark;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234dc2ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    transition: all $transition-normal;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &:hover {
+      border-color: $border-hover;
+    }
+
+    &:focus {
+      border-color: $cyan;
+      box-shadow: 0 0 0 3px rgba($cyan, 0.15);
+    }
+
+    option {
+      background-color: $bg-dark;
+      color: $text-primary;
+    }
+  }
+}
+
+// =====================================================
+// COUNTRY FILTER
+// =====================================================
+.country-filter {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  flex: 1 1 0; // Take remaining space
+  min-height: 0; // Critical: allows shrinking
+  overflow: hidden;
+
+  &__label {
+    @include fontz(14px, 20px, 600);
+    color: $text-primary;
+    flex-shrink: 0;
+  }
+
+  &__countries-list-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    flex: 1 1 0;
+    min-height: 0; // Critical: enables overflow scroll
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    @include custom-scrollbar(4px);
+
+    @media (max-width: 950px) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      column-gap: 12px;
+      row-gap: 8px;
+      flex: 0 0 auto;
+      min-height: auto;
+      overflow-y: visible;
+      padding-right: 0;
+    }
+  }
+
+  &__countries-item {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 950px) {
+    flex: 0 0 auto;
+    min-height: auto;
+    overflow: visible;
+  }
+}
+
+// =====================================================
+// CHECKBOX STYLES (Country filter & Only favorites)
+// =====================================================
+.country-filter-item,
+.only-favorites {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 28px;
+  @include fontz(14px, 20px, 400);
+  color: $text-muted;
+  cursor: pointer;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+
+    .country-filter-item__input_custom,
+    .only-favorites__input_custom {
+      border-color: $cyan;
+    }
+  }
+
+  &__input {
+    &_original {
+      position: absolute;
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    &_custom {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 2px solid $border-color;
+      border-radius: 4px;
+      background: $bg-dark;
+      transition: all $transition-fast;
+    }
+
+    &_original:checked + &_custom {
+      background: $gradient-primary;
+      border-color: transparent;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23060e14' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+    }
+
+    &_original:focus + &_custom {
+      box-shadow: 0 0 0 3px rgba($cyan, 0.2);
+    }
+  }
+}
+
+.only-favorites {
+  padding: 12px 0 12px 28px;
+  border-top: 1px solid $border-color;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+// =====================================================
+// RESET FILTERS BUTTON
+// =====================================================
+.reset-filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  margin-top: 12px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: $text-muted;
+  @include fontz(14px, 20px, 500);
+  cursor: pointer;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    border-color: $cyan;
+    color: $cyan;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    transition: transform $transition-fast;
+  }
+
+  &:hover:not(:disabled) &__icon {
+    transform: rotate(-90deg);
+  }
+}

@@ -1,0 +1,263 @@
+@import "../mixins";
+
+// =====================================================
+// PAGE WRAPPER
+// =====================================================
+.page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// =====================================================
+// DECORATIVE ORBS
+// =====================================================
+.orb-left {
+  position: fixed;
+  top: 20%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 102, 255, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb-right {
+  position: fixed;
+  bottom: 10%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba($cyan, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+// =====================================================
+// BACKGROUND PATTERN
+// =====================================================
+.pattern-bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background-image: url('/images/hero-pattern.svg');
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: contain;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// =====================================================
+// HEADER
+// =====================================================
+.header {
+  position: relative;
+  z-index: 100;
+  background: linear-gradient(135deg, rgba(13, 54, 104, 0.98) 0%, rgba(9, 28, 53, 0.98) 100%);
+  @include backdrop-blur(20px);
+  overflow: hidden;
+
+  &__border-glow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $cyan, $teal, $primary-blue, $cyan);
+    background-size: 300% 100%;
+    animation: gradientRotate 4s ease-in-out infinite;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(to top, rgba($cyan, 0.15), transparent);
+      pointer-events: none;
+    }
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: all $transition-normal;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  &__logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  &__logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    @include gradient-text($gradient-text);
+    letter-spacing: -0.5px;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__link {
+    position: relative;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: $text-muted;
+    border-radius: $radius-sm;
+    text-decoration: none;
+    transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    span {
+      position: relative;
+      z-index: 1;
+      transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  text-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover {
+      color: $cyan;
+
+      span {
+        text-shadow: 0 0 20px rgba($cyan, 0.6), 0 0 40px rgba($cyan, 0.3);
+      }
+    }
+
+    &_active {
+      span {
+        @include gradient-text($gradient-primary);
+        background-size: 200% 100%;
+        animation: shimmer 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 8px rgba($cyan, 0.4));
+      }
+    }
+  }
+}
+
+// =====================================================
+// MAIN CONTENT
+// =====================================================
+.main-content {
+  flex: 1 1 auto;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 32px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+// =====================================================
+// FOOTER
+// =====================================================
+.footer {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, rgba(9, 28, 53, 0.98) 0%, rgba(6, 14, 20, 0.98) 100%);
+  @include backdrop-blur(20px);
+  margin-top: auto;
+
+  &__border-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $cyan, $teal, $primary-blue, $cyan);
+    background-size: 300% 100%;
+    animation: gradientRotate 4s ease-in-out infinite;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(to bottom, rgba($cyan, 0.1), transparent);
+      pointer-events: none;
+    }
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 24px;
+      text-align: center;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: all $transition-normal;
+
+    &:hover {
+      transform: translateX(4px);
+    }
+  }
+
+  &__logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  &__logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    @include gradient-text($gradient-text);
+    letter-spacing: -0.3px;
+  }
+
+  &__copyright {
+    color: $text-dark;
+    font-size: 13px;
+    transition: color $transition-normal;
+
+    &:hover {
+      color: $text-muted;
+    }
+  }
+}

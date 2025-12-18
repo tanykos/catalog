@@ -1,0 +1,67 @@
+@import "./variables";
+
+// =====================================================
+// TYPOGRAPHY
+// =====================================================
+@mixin fontz($size, $hight, $weight) {
+  font-size: $size;
+  line-height: $hight;
+  font-weight: $weight;
+}
+
+// =====================================================
+// GRADIENT TEXT
+// =====================================================
+@mixin gradient-text($gradient: $gradient-text) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// =====================================================
+// SHIMMER SKELETON EFFECT
+// =====================================================
+@mixin shimmer-skeleton($delay: 0s) {
+  background: linear-gradient(
+    90deg,
+    $bg-dark 0%,
+    rgba($cyan, 0.08) 50%,
+    $bg-dark 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  animation-delay: $delay;
+}
+
+// =====================================================
+// BACKDROP BLUR
+// =====================================================
+@mixin backdrop-blur($blur: 8px) {
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// =====================================================
+// CUSTOM SCROLLBAR
+// =====================================================
+@mixin custom-scrollbar($width: 6px, $track-bg: $bg-dark) {
+  // Webkit (Chrome, Safari, Edge)
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-bg;
+    border-radius: calc($width / 2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, $cyan, $teal);
+    border-radius: calc($width / 2);
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: $cyan $track-bg;
+}
