@@ -32,7 +32,7 @@ export default function ProductsPage({ initialCards, ssrError }: IProductsPagePr
   return (
     <MainLayout>
       <div className={styles["content-container"]}>
-        <CatalogFilters />
+        <CatalogFilters initialCards={initialCards} />
         <CardsList initialCards={initialCards} />
       </div>
     </MainLayout>

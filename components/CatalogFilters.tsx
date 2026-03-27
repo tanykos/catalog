@@ -1,15 +1,24 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getFiltersState } from "../store/selectors";
-import { setSortBy, resetFilters } from "../store/reducers/catalogPageSlice";
+import { getCountries, getFiltersState, getIsInitialized } from "../store/selectors";
+import { setSortBy, resetFilters, toggleCountryFilter } from "../store/reducers/catalogPageSlice";
 import styles from "../styles/components/CatalogFilters.module.scss";
 import cn from "classnames";
-import { isSortOption, SORT_BY } from "../types";
+import { ICard, isSortOption, SORT_BY } from "../types";
 import ResetIcon from "./icons/ResetIcon";
 
-export default function CatalogFilters() {
+interface ICatalogFiltersProps {
+  initialCards?: ICard[] | null;
+}
+
+export default function CatalogFilters({ initialCards = null }: ICatalogFiltersProps) {
   const dispatch = useAppDispatch();
   const filters = useAppSelector(getFiltersState);
+  const isInitialized = useAppSelector(getIsInitialized);
+  const reduxCountries = useAppSelector(getCountries);
+  const countries = isInitialized
+    ? reduxCountries
+    : Array.from(new Set((initialCards ?? []).map((card) => card.country))).sort((a, b) => a.localeCompare(b));
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -20,6 +29,10 @@ export default function CatalogFilters() {
 
   const handleResetFilters = () => {
     dispatch(resetFilters());
+  };
+
+  const handleCountryToggle = (country: string) => {
+    dispatch(toggleCountryFilter(country));
   };
 
   const hasActiveFilters =
@@ -52,17 +65,21 @@ export default function CatalogFilters() {
         <div className={cn(styles["filters__country-filter-container"], styles["country-filter"])}>
           <span className={styles["country-filter__label"]}>Страна</span>
           <div className={styles["country-filter__countries-list-container"]}>
-            {/* TODO: реализовать фильтр по странам */}
-            <label
-              className={cn(styles["country-filter__countries-item"], styles["country-filter-item"])}
-            >
-              <input
-                className={styles["country-filter-item__input_original"]}
-                type="checkbox"
-              />
-              <span className={styles["country-filter-item__input_custom"]}/>
-              страна
-            </label>
+            {countries.map((country) => (
+              <label
+                key={country}
+                className={cn(styles["country-filter__countries-item"], styles["country-filter-item"])}
+              >
+                <input
+                  className={styles["country-filter-item__input_original"]}
+                  type="checkbox"
+                  checked={filters.selectedCountries.includes(country)}
+                  onChange={() => handleCountryToggle(country)}
+                />
+                <span className={styles["country-filter-item__input_custom"]}/>
+                {country}
+              </label>
+            ))}
           </div>
         </div>
 

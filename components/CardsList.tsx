@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import DetailedCard from "./DetailedCard";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getCardsData, getIsLoading, getError } from "../store/selectors";
+import { getCardsData, getIsLoading, getError, getIsInitialized } from "../store/selectors";
 import { fetchCards } from "../store/reducers/catalogPageSlice";
 import { ICard } from "../types";
 
@@ -19,10 +19,11 @@ export default function CardsList({ initialCards = null }: ICardsListProps) {
   const dispatch = useAppDispatch();
   const error = useAppSelector(getError);
   const isLoading = useAppSelector(getIsLoading);
+  const isInitialized = useAppSelector(getIsInitialized);
   const reduxCards = useAppSelector(getCardsData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const cards = reduxCards.length > 0 ? reduxCards : (initialCards ?? []);
+  const cards = isInitialized ? reduxCards : (initialCards ?? []);
 
   const handleCardSelect = (cardId: string) => {
     setSelectedCardId(cardId);

@@ -36,6 +36,7 @@ const initialState: ICatalogState = {
     sortBy: SORT_BY.DEFAULT,
   },
   resultsState: {
+    isInitialized: false,
     isLoading: false,
     cardsData: [],
     error: null,
@@ -47,19 +48,24 @@ const catalogPageSlice = createSlice({
   initialState,
   reducers: {
     toggleCountryFilter(state, action: PayloadAction<string>) {
-      // TODO: реализовать фильтр по странам
+      const country = action.payload;
+      const isSelected = state.filtersState.selectedCountries.includes(country);
+
+      if (isSelected) {
+        state.filtersState.selectedCountries = state.filtersState.selectedCountries.filter(
+          (selectedCountry) => selectedCountry !== country
+        );
+      } else {
+        state.filtersState.selectedCountries.push(country);
+      }
     },
 
     setSortBy(state, action: PayloadAction<SortOption>) {
       state.filtersState.sortBy = action.payload;
-      if (action.payload === SORT_BY.PRICE_ASC) {
-        state.resultsState.cardsData.sort((a, b) => a.price - b.price);
-      } else if (action.payload === SORT_BY.PRICE_DESC) {
-        state.resultsState.cardsData.sort((a, b) => b.price - a.price);
-      }
     },
 
     initializeCards(state, action: PayloadAction<ICard[]>) {
+      state.resultsState.isInitialized = true;
       state.resultsState.cardsData = action.payload;
       state.resultsState.error = null;
       state.resultsState.isLoading = false;
@@ -76,6 +82,7 @@ const catalogPageSlice = createSlice({
         state.resultsState.error = null;
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
+        state.resultsState.isInitialized = true;
         state.resultsState.isLoading = false;
         state.resultsState.cardsData = action.payload;
       })

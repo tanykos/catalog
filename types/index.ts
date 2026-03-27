@@ -31,6 +31,7 @@ export interface IFiltersState {
 }
 
 export interface IResultsState {
+  isInitialized: boolean;
   isLoading: boolean;
   cardsData: ICard[];
   error: string | null;
