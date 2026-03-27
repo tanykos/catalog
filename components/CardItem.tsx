@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "../styles/components/CardItem.module.scss";
 import cn from "classnames";
@@ -7,21 +7,36 @@ import { ICardItemProps } from "../types";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { toggleFavoriteAsync } from "../store/reducers/catalogPageSlice";
 import { getIsFavoriteUpdating } from "../store/selectors";
+import { ERROR_MESSAGES, ERROR_DISPLAY_DURATION } from "../api/constants";
 
 export default function CardItem({ card, onSelect }: ICardItemProps) {
   const dispatch = useAppDispatch();
   const isFavoriteUpdating = useAppSelector((state) => getIsFavoriteUpdating(state, card.id));
+  const [favoriteError, setFavoriteError] = useState<string | null>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    };
+  }, []);
 
   const handleCardClick = () => {
     onSelect(card.id);
   };
 
-  const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFavoriteClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     if (isFavoriteUpdating) return;
 
-    dispatch(toggleFavoriteAsync({ id: card.id, isFavorite: !card.isFavorite }));
+    setFavoriteError(null);
+    const result = await dispatch(toggleFavoriteAsync({ id: card.id, isFavorite: !card.isFavorite }));
+
+    if (toggleFavoriteAsync.rejected.match(result)) {
+      setFavoriteError(ERROR_MESSAGES.FAVORITE_ERROR);
+      errorTimerRef.current = setTimeout(() => setFavoriteError(null), ERROR_DISPLAY_DURATION);
+    }
   };
 
   return (
@@ -45,9 +60,13 @@ export default function CardItem({ card, onSelect }: ICardItemProps) {
           className={cn(styles["card__add-to-favorite-btn"], {
             [styles["card__add-to-favorite-btn_active"]]: card.isFavorite,
             [styles["card__add-to-favorite-btn_loading"]]: isFavoriteUpdating,
+            [styles["card__add-to-favorite-btn_error"]]: favoriteError,
           })}
         >
           <HeartIcon />
+          {favoriteError && (
+            <span className={styles["card__favorite-error"]}>{favoriteError}</span>
+          )}
         </button>
       </div>
     </div>

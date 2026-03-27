@@ -59,6 +59,6 @@ export const getServerSideProps: GetServerSideProps<IProductPageProps> = async (
   }
 
   return {
-    props: { card: result.data, error: null },
+    props: { card: result.data ?? null, error: null },
   };
 };
