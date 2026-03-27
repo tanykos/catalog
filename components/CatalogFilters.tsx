@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getCountries, getFiltersState, getIsInitialized } from "../store/selectors";
+import { getCountries, getFiltersState, getIsInitialized, getVisibleCardsCount } from "../store/selectors";
 import { setSortBy, resetFilters, toggleCountryFilter } from "../store/reducers/catalogPageSlice";
 import styles from "../styles/components/CatalogFilters.module.scss";
 import cn from "classnames";
@@ -16,6 +16,7 @@ export default function CatalogFilters({ initialCards = null }: ICatalogFiltersP
   const filters = useAppSelector(getFiltersState);
   const isInitialized = useAppSelector(getIsInitialized);
   const reduxCountries = useAppSelector(getCountries);
+  const totalCount = useAppSelector((state) => getVisibleCardsCount(state, initialCards));
   const countries = isInitialized
     ? reduxCountries
     : Array.from(new Set((initialCards ?? []).map((card) => card.country))).sort((a, b) => a.localeCompare(b));
@@ -45,7 +46,7 @@ export default function CatalogFilters({ initialCards = null }: ICatalogFiltersP
         <div className={cn(styles["filters__total-count-container"], styles["total-count"])}>
           <span className={styles["total-count__label"]}>Товаров </span>
           <span className={styles["total-count__output"]}>
-            {/* TODO: отобразить текущее количество карточек */}
+            {totalCount}
           </span>
         </div>
 

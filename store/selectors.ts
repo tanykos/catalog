@@ -31,6 +31,13 @@ export const getCardsData = createSelector(
   }
 );
 
+export const getVisibleCardsCount = (state: RootState, initialCards: ICard[] | null = null): number => {
+  if (getIsInitialized(state)) {
+    return getCardsData(state).length;
+  }
+  return (initialCards ?? []).length;
+};
+
 export const getCountries = createSelector(
   [getRawCardsData],
   (cardsData) => Array.from(new Set(cardsData.map((card) => card.country))).sort((a, b) => a.localeCompare(b))
