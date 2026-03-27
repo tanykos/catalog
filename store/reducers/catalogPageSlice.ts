@@ -60,9 +60,9 @@ const catalogPageSlice = createSlice({
     },
 
     initializeCards(state, action: PayloadAction<ICard[]>) {
-      if (state.resultsState.cardsData.length === 0) {
-        state.resultsState.cardsData = action.payload;
-      }
+      state.resultsState.cardsData = action.payload;
+      state.resultsState.error = null;
+      state.resultsState.isLoading = false;
     },
 
     resetFilters(state) {

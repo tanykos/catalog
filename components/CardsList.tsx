@@ -7,16 +7,22 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getCardsData, getIsLoading, getError } from "../store/selectors";
 import { fetchCards } from "../store/reducers/catalogPageSlice";
+import { ICard } from "../types";
 
 const SKELETON_COUNT = 6;
 
-export default function CardsList() {
+interface ICardsListProps {
+  initialCards?: ICard[] | null;
+}
+
+export default function CardsList({ initialCards = null }: ICardsListProps) {
   const dispatch = useAppDispatch();
   const error = useAppSelector(getError);
   const isLoading = useAppSelector(getIsLoading);
-  const cards = useAppSelector(getCardsData);
+  const reduxCards = useAppSelector(getCardsData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const cards = reduxCards.length > 0 ? reduxCards : (initialCards ?? []);
 
   const handleCardSelect = (cardId: string) => {
     setSelectedCardId(cardId);
