@@ -49,6 +49,9 @@ export const getIsLoading = (state: RootState) => state.catalogPage.resultsState
 
 export const getError = (state: RootState) => state.catalogPage.resultsState.error;
 
+export const getIsFavoriteUpdating = (state: RootState, cardId: string): boolean =>
+  state.catalogPage.resultsState.favoriteUpdatingIds.includes(cardId);
+
 export const getCardById = (state: RootState, cardId: string | null): ICard | null => {
   if (!cardId) return null;
   return state.catalogPage.resultsState.cardsData.find((c) => c.id === cardId) ?? null;

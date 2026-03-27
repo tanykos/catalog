@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { ICatalogState, ICard, SortOption, SORT_BY } from "../../types";
-import { getCards, updateComments } from "../../api/api";
+import { getCards, toggleFavorite, updateComments } from "../../api/api";
 import { ERROR_MESSAGES } from "../../api/constants";
 
 const getErrorMessage = (payload: unknown, fallback: string): string =>
@@ -30,6 +30,19 @@ export const addCommentAsync = createAsyncThunk(
   }
 );
 
+export const toggleFavoriteAsync = createAsyncThunk(
+  "catalogPage/toggleFavorite",
+  async ({ id, isFavorite }: { id: string; isFavorite: boolean }, { rejectWithValue }) => {
+    const result = await toggleFavorite(id, isFavorite);
+
+    if (!result.success) {
+      return rejectWithValue(result.error ?? ERROR_MESSAGES.FAVORITE_ERROR);
+    }
+
+    return { id, isFavorite };
+  }
+);
+
 const initialState: ICatalogState = {
   filtersState: {
     selectedCountries: [],
@@ -39,6 +52,7 @@ const initialState: ICatalogState = {
     isInitialized: false,
     isLoading: false,
     cardsData: [],
+    favoriteUpdatingIds: [],
     error: null,
   },
 };
@@ -89,6 +103,29 @@ const catalogPageSlice = createSlice({
       .addCase(fetchCards.rejected, (state, action) => {
         state.resultsState.isLoading = false;
         state.resultsState.error = getErrorMessage(action.payload, ERROR_MESSAGES.LOAD_ERROR);
+      })
+      .addCase(toggleFavoriteAsync.pending, (state, action) => {
+        const cardId = action.meta.arg.id;
+
+        if (!state.resultsState.favoriteUpdatingIds.includes(cardId)) {
+          state.resultsState.favoriteUpdatingIds.push(cardId);
+        }
+      })
+      .addCase(toggleFavoriteAsync.fulfilled, (state, action) => {
+        state.resultsState.favoriteUpdatingIds = state.resultsState.favoriteUpdatingIds.filter(
+          (id) => id !== action.payload.id
+        );
+
+        const card = state.resultsState.cardsData.find((c) => c.id === action.payload.id);
+        if (card) {
+          card.isFavorite = action.payload.isFavorite;
+        }
+      })
+      .addCase(toggleFavoriteAsync.rejected, (state, action) => {
+        const cardId = action.meta.arg.id;
+        state.resultsState.favoriteUpdatingIds = state.resultsState.favoriteUpdatingIds.filter(
+          (id) => id !== cardId
+        );
       })
       .addCase(addCommentAsync.fulfilled, (state, action) => {
         const card = state.resultsState.cardsData.find((c) => c.id === action.payload.id);
